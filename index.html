@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>三国乱斗</title>
+
+<script src="./js/framework/seajs/sea.js"></script>
+</head>
+<body>
+<canvas id="gameCont" width="450" height="600" ></canvas>
+<script>
+  // Set configuration
+  seajs.config({
+    base: "./js/library"
+  });
+
+  seajs.use("main" , function(main) {
+  	main.init();
+  	
+  });
+
+</script>
+</body>
+</html>
