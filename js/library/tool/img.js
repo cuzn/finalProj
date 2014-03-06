@@ -1,3 +1,6 @@
+/**
+ * 图片加载及获取工具
+ */
 define(function(require, exports, module) {
   	console.log('load imgTool')
     

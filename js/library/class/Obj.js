@@ -1,3 +1,10 @@
+/**
+ * 对象基类，需要被继承，子类在class/obj下
+ * @param  {[type]} require [description]
+ * @param  {[type]} exports [description]
+ * @param  {[type]} module  [description]
+ * @return {[type]}         [description]
+ */
 define(function(require, exports, module) {
   	console.log('load sence class')
     var G = require('global')

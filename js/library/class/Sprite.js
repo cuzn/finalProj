@@ -1,7 +1,8 @@
-define(function(require, exports, module) {
+/**
+ *雪碧图，不解释 
+ */
 
-var A = require('A');
-A();
+define(function(require, exports, module) {
 /**
  *  雪碧图类
  * @param {type} src 图片的地址或图片对象

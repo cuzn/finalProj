@@ -1,3 +1,6 @@
+/**
+ * 场景类，需要被继承，子类在 class/sence下
+ */
 define(function(require, exports, module) {
   	console.log('load sence class')
     var G = require('global');
