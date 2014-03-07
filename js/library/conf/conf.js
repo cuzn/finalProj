@@ -1,9 +1,11 @@
 define(function(require, exports, module) {
   	console.log('load conf')
-    var conf = {};
+    var conf = {
+    	objDrawRange : true ,
+    	
+    };
 
     conf.img = require('conf/img')
-    conf.objDrawRange = true;
 
     module.exports = conf;
 

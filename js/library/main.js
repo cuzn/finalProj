@@ -6,6 +6,8 @@ define(function(require, exports, module) {
     var G = require('global');
     var LoadSence = require('class/sence/LoadSence');
 
+
+
     var main = {}
     main.init = function() {
         var funcList = [
@@ -21,17 +23,30 @@ define(function(require, exports, module) {
         
     }
 
-    //not finish
+    //适应屏幕
     main.adjustScreen = function(funcList) {
         console.log('adjustScreen')
+
+        function setScale() {
+            var winSize = screenTool.getWindowSize();
+            var scale =  screenTool.initScale();
+            console.log(scale);
+            var dom = document.getElementById('gameCont');
+            G.c = dom;
+            G.c.width = winSize.width;
+            G.c.height = winSize.height;
+            G.ctx = dom.getContext("2d");
+            G.ctx.scale(scale.width , scale.height);
+        }
+        //屏幕尺寸变化时适应
+        window.onresize = setScale;
+        setScale();
         eventTool.execByOrder(funcList)
     }
 
 
     main.initScence = function(funcList) {
-        var dom = document.getElementById('gameCont');
-        G.c = dom;
-        G.ctx = dom.getContext("2d");
+        
         G.sence = new LoadSence();
         console.log('initScence')
         eventTool.execByOrder(funcList)

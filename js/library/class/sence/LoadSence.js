@@ -10,11 +10,11 @@ define(function(require, exports, module) {
 
 
     	//just for indentify
-    	me.objList['text'].text = 'welcome LoadSence';
+    	me.setText('welcome LoadSence');
 
     	me.setAfterDraw(function() {
     		if (me.status == 'load done') {
-    			G.sence = new GameSence;
+    			G.sence = new GameSence();
     		};
     	});
     }

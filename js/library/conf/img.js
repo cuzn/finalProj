@@ -5,7 +5,8 @@ define(function(require, exports, module) {
 
     img.srcList = [
     	'1.jpg',
-    	'2.jpg'
+    	'2.jpg',
+        'gameSence.jpg'
     ]
 
     //add the path pre

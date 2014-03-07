@@ -17,6 +17,7 @@ define(function(require, exports, module) {
       me.y = 0;
       me.width = 0;
       me.height = 0;
+      me.desc = 'Obj'; //用于标识对象名
 
       me.setRange = function(x , y , width , height) {
         me.x = x;

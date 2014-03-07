@@ -3,7 +3,8 @@
  */
 define(function(require, exports, module) {
   	console.log('load imgTool')
-    
+    var conf = require('conf/conf')
+
     var imgTool = {
         imgObjList : {},
         get : function(atr) {
@@ -18,14 +19,15 @@ define(function(require, exports, module) {
 
     	for(var atr in imgList) {
     		var img = new Image();
-
     		img.onload = oneDoneFunc;
     		img.src = imgList[atr];
-            imgObjList[atr] = img
-    	}
+            imgTool.imgObjList[this.getAtr(imgList[atr])] = img
+    	}  
 
-        imgTool.imgObjList = imgObjList
     }
 
+    imgTool.getAtr = function(src) {
+        return src.split(conf.img.pre)[1]
+    }
     module.exports = imgTool
 })
