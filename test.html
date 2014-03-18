@@ -4,20 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
 <title>三国乱斗</title>
-<script src="./js/framework/seajs/sea.js"></script>
 </head>
 <body style="margin:0;padding:0" >
 <canvas id="gameCont" width="640" height="960" ></canvas>
 <script>
-  // Set configuration
-  seajs.config({
-    base: "./js/library"
-  });
+  	var a = function() {
+  		var me = this;
+  		me.x = 23;
 
-  seajs.use("main" , function(main) {
-  	main.init();
-  	
-  });
+  		me.changeX = function(x) {
+  			me.x = x;
+  		}
+  	}
+
+  	var b = function() {
+  		var me = this;
+  		me.__proto__ = new a();
+
+  		me.change = function(x) {
+  			me.changeX(x);
+  		}
+  	}
+	
+
 
 </script>
 </body>

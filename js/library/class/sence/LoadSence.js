@@ -15,6 +15,7 @@ define(function(require, exports, module) {
     	me.setAfterDraw(function() {
     		if (me.status == 'load done') {
     			G.sence = new GameSence();
+                G.sence.init();
     		};
     	});
     }

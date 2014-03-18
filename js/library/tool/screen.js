@@ -52,5 +52,25 @@ define(function(require, exports, module) {
 		return {x : realX , y : realY}
 	}
 
+	screenTool.transTouchEvent = function(e) {
+		return {
+			changedTouches : screenTool.transTouches(e.changedTouches),
+			touches : screenTool.transTouches(e.touches)
+		}
+	}
+
+	screenTool.transTouches = function(touches) {
+		var ret = [];
+
+		for(var i in touches) {
+			var touch = {}
+
+			realPos = screenTool.getRealPos(touches[i].clientX , touches[i].clientY);
+			touch = realPos;
+			touch.identifier = touches[i].identifier
+			ret.push(touch);
+		}
+		return ret;
+	}
     module.exports = screenTool
 })

@@ -54,21 +54,22 @@ define(function(require, exports, module) {
 
     main.initEvent = function(funcList) {
         document.addEventListener('touchstart' , function(e){
-            console.log('touchStart')
             e.preventDefault();
-            if(G.sence.touchstart)
-                G.sence.touchstart(e);
+            e = screenTool.transTouchEvent(e);
+            if(G.sence.touch)
+                G.sence.touch(e);
         });
 
         document.addEventListener('touchmove' , function(e){
             e.preventDefault();
+            e = screenTool.transTouchEvent(e);
             if(G.sence.touchmove)
                 G.sence.touchmove(e);
         });
 
         document.addEventListener('touchend' , function(e){
-            console.log('touchEnd')
             e.preventDefault();
+            e = screenTool.transTouchEvent(e);
             if(G.sence.touchend)
                 G.sence.touchend(e);
         });
@@ -106,7 +107,7 @@ define(function(require, exports, module) {
 
     main.runGame = function () {
         G.ctx.fillRect(0 , 0 , G.c.width ,G.c.height)
-        
+        G.sence.run();
         G.sence.draw();
         setTimeout(main.runGame, 30);
     }

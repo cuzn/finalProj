@@ -19,11 +19,14 @@ define(function(require, exports, module) {
       me.height = 0;
       me.desc = 'Obj'; //用于标识对象名
 
+      me.setDesc = function(desc) {
+        me.desc = desc
+      }
       me.setRange = function(x , y , width , height) {
-        me.x = x;
-        me.y = y;
-        me.width = width;
-        me.height = height;
+        me.x = x 
+        me.y = typeof y === 'undefined' ? me.y : y;
+        me.width = typeof width === 'undefined' ? me.width : width;
+        me.height = typeof height === 'undefined' ? me.height : height;
       }
 
       me.on = function(x , y) {
@@ -47,11 +50,15 @@ define(function(require, exports, module) {
         G.ctx.restore();
       }
       me.touch = function(x , y) {
-        console.log('obj touched')
+        console.log(me.desc + ' touched' , me)
       }
 
        me.touchend = function(x , y) {
-        console.log('obj touchend')
+        console.log(me.desc + ' touchend' , me)
+      }
+
+      me.touchmove = function(x, y) {
+        console.log(me.desc + ' touchmove' , me)
       }
     }
    	
