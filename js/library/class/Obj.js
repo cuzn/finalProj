@@ -18,6 +18,11 @@ define(function(require, exports, module) {
       me.width = 0;
       me.height = 0;
       me.desc = 'Obj'; //用于标识对象名
+      me.isHide = false;
+
+      me.setHide = function(hide) {
+        me.isHide = hide
+      }
 
       me.setDesc = function(desc) {
         me.desc = desc
@@ -30,6 +35,9 @@ define(function(require, exports, module) {
       }
 
       me.on = function(x , y) {
+        if(me.isHide) {
+          return false
+        }
         if(me.width && me.height && me.x <= x && me.x + me.width >= x
           && me.y <= y && me.y + me.height >= y
           ){
@@ -40,6 +48,9 @@ define(function(require, exports, module) {
       }
 
       me.drawRange = function() {
+        if(me.isHide) {
+          return
+        }
         if(!conf.objDrawRange) {
           return
         }

@@ -6,16 +6,21 @@ define(function(require, exports, module) {
     var G = require('global');
     var Obj = require('class/Obj')
 
-    var Chess = function(chessName) {
+    var Chess = function(chessInfo) {
     	var me = this;
     	me.__proto__ = new Obj();
         me.cell = null;
 
-    	me.img = G.tool.img.get('card/' + chessName + '.png'); //下了之后的样子
+        me.name = chessInfo.name
+        me.moral = chessInfo.moral
+        me.life = chessInfo.life
+        me.attack = chessInfo.attack
+        me.move = chessInfo.move
+        me.index = chessInfo.index
+
+    	me.img = G.tool.img.get('card/' + me.name + '.png'); //下了之后的样子
         me.setDesc('Chess');
 
-        me.attack = 5;
-        me.life = 10;
 
     	me.draw = function() {
     		G.draw(function() {
@@ -34,8 +39,6 @@ define(function(require, exports, module) {
 
     		});
 
-            
-
             //画轨迹
             if(me.touchmoveFlag == true) {
                 G.draw(me.drawPath());
@@ -47,11 +50,10 @@ define(function(require, exports, module) {
         me.drawPath = function() {
             var startX = me.x + me.width / 2;
             var startY = me.y + me.height / 2;
-            var bezier1 = {x :  Math.randomNe(me.width / 2) , y : Math.randomNe(me.height / 2)}
-            var bezier2 = {x : Math.randomNe(me.width / 2)  , y : Math.randomNe(me.height /2)}
+            //var bezier1 = {x :  Math.randomNe(me.width / 2) , y : Math.randomNe(me.height / 2)}
+            //var bezier2 = {x : Math.randomNe(me.width / 2)  , y : Math.randomNe(me.height /2)}
 
             var my_gradient=G.ctx.createLinearGradient(startX,startY,me.touchmove.x,me.touchmove.y);
-
             my_gradient.addColorStop(0,"orange");
             my_gradient.addColorStop(1,"red");
             G.ctx.lineWidth = 15;
@@ -59,7 +61,6 @@ define(function(require, exports, module) {
             G.ctx.strokeStyle = my_gradient
 
             var func = function() {
-                for(var i = 0 ; i < 1 ; i++) {
                     G.ctx.beginPath();
                     G.ctx.moveTo(startX,startY);
                     // G.ctx.bezierCurveTo(
@@ -69,11 +70,15 @@ define(function(require, exports, module) {
                     //     );
                     G.ctx.lineTo(me.touchmove.x , me.touchmove.y);
                     G.ctx.stroke();
-                }
             }
 
             
             return func;
+        }
+
+
+        me.getCell = function(){
+            return me.cell;
         }
 
         me.touch = function(x , y) {
@@ -82,16 +87,14 @@ define(function(require, exports, module) {
             me.touch.y = y;
             me.touch.oriX = me.x;
             me.touch.oriY = me.y;
-        }
-
-        me.getCell = function(){
-            return me.cell;
+            cellList = G.sence.cellGroup.getEnableMoveCellList(me.cell , me.move)
+            for(var i in cellList) {
+                cellList[i].setBlink(true)
+            }
         }
 
         me.touchmove = function(x , y) {
             me.touchmoveFlag = true;
-
-            
             me.touchmove.x = x;
             me.touchmove.y = y;
 

@@ -16,7 +16,7 @@ define(function(require, exports, module) {
     	me.done = false;
     	me.eventList = eventList || [];
 
-    	me.addFunc = function(event) {
+    	me.addEvent = function(event) {
     		me.eventList.push(event)
     	}
 
@@ -27,7 +27,7 @@ define(function(require, exports, module) {
     		}
     		//如果没有事件，队列结束
     		if(me.eventList.length == 0) {
-    			me.done();
+    			me.setDone();
     			return;
     		}
 
@@ -47,20 +47,41 @@ define(function(require, exports, module) {
     }
 
 
-    Queue.Event = function() {
+    Queue.Event = function(duration , func) {
     	var me = this;
-    	var me.done = false;
+    	me.done = false;
+
+        me.duration = duration || 1000
+        me.runFunc = func || function() {}
+        me.runTime = 0 //执行的次数
+        me.startDate = new Date();
+        me.nowDate = null
 
     	//需要重写
-    	me.run = function() {};
+    	me.run = function() {
+            me.nowDate = new Date();
+            var runTime = Math.floor((me.nowDate.getTime() - me.startDate.getTime()) / me.duration)
+            while(me.runTime < runTime) {
+                me.runTime++
+                me.runFunc()
+            }
+        };
+
+        me.setDuration = function(ms) {
+            me.duration = ms
+        }
+
+        me.setFunc = function(func) {
+            me.runFunc = func
+        }
 
     	me.isDone = function() {
     		return me.done;
     	}
 
-    	me.setDone = function() {
-    		me.done = true;
+    	me.setDone = function(isDone) {
+    		me.done = typeof isDone == 'undefined' ? true : isDone;
     	}
     }
-    module.exports = Queue；
+    module.exports = Queue
 })

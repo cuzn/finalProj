@@ -3,8 +3,10 @@
 import socket , select , ConfigParser , string, sys , time
 from Client import Client
 from conf import config
+from MenuHandler import MenuHandler
 
 class main():
+    """"采用了select模型，单进程，单线程"""
     def __init__(self):
         self.host = config.get('server','ip')
         self.port = string.atoi(config.get('server' , 'port'))
@@ -16,6 +18,7 @@ class main():
 
     def run(self) :
         while True :
+            #采用select模型
             #rs : 就绪读
             #ws : 就绪写
             #es : 就绪的错误信息
@@ -26,6 +29,8 @@ class main():
                     print 'get conn from ' , addr
                     client = Client(conn , addr)
                     self.clientList[self.getIndex(addr)] = client
+                    menuHandler = MenuHandler()
+                    client.setHandler(menuHandler)
                     self.inputs.append(conn)
                 else :
                     try :
@@ -48,6 +53,8 @@ class main():
 
                     if disconnected:
                         print r.getpeername() , 'disconnected'
+                        client = self.clientList[self.getIndex(r.getpeername())] 
+                        client.disconnect()
                         del self.clientList[self.getIndex(r.getpeername())] 
                         self.inputs.remove(r)
 

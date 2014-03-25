@@ -14,7 +14,6 @@ define(function(require, exports, module) {
     		event : require('tool/event'),
     		screen : require('tool/screen')
     	},
-    	
     	draw : function(func) {
     		this.ctx.save();
     		func();
@@ -44,8 +43,28 @@ define(function(require, exports, module) {
 
         return random;
     }
+    /**
+     * 获取对象的长度
+     * @param  {Object} obj   对象
+     * @param  {bool} withP 是否要统计继承下来的属性，默认是true
+     * @return {int}       长度
+     */ 
+    JSON.getLen = function(obj , withP) {
+      withP = typeof withP === 'undefined' ? true : withP;
+      
+      var len = 0
+      for(var index in obj) {
+        if(!withP) {
+          //不是自己的属性，不增加
+          if(!obj.hasOwnProperty(index)){
+            break;
+          }
+        }
+        len++
+      }
+      return  len
+    }
 
-    console.log(global);
 
     module.exports = global
 })

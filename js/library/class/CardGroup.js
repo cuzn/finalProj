@@ -8,20 +8,22 @@ define(function(require, exports, module) {
     var CardGroup = function() {
     	var me = this;
 
-    	me.cardList = [];
+    	me.cardDict = {};
     	me.cardDist = 80;
     	me.senceLayer = 3; //卡牌在第二组
+        me.cardY = 840
 
     	me.addCard = function(card) {
-    		me.cardList.push(card);
+    		me.cardDict[card.index] = card;
+            card.setRange( 0 ,me.cardY)
     		G.sence.addObj(me.senceLayer ,card);
     	}
 
     	me.delCard = function(card) {
-    		for(var i in me.cardList) {
-            	if(me.cardList[i] == card) {
+    		for(var i in me.cardDict) {
+            	if(me.cardDict[i] == card) {
 	              //删除
-	              me.cardList.splice(i , 1);
+	              delete me.cardDict[i];
 	              G.sence.delObj(card);
 	              return card;
             	}
@@ -29,13 +31,15 @@ define(function(require, exports, module) {
     	}
 
     	me.calcPos = function() {
-    		var num = me.cardList.length;
+    		var num = JSON.getLen(me.cardDict);
     		var flag = num % 2 ;
 			var firstCardX = G.tool.screen.realWinSize.width / 2 - ((num / 2) - 0.5) * me.cardDist 
 
-    		for(var i in me.cardList) {
+            var i = 0;
+    		for(var index in me.cardDict) {
     			var centerX = firstCardX + me.cardDist * i;
-    			me.cardList[i].setCenterX(centerX);
+    			me.cardDict[index].setCenterX(centerX);
+                i++
     		}
     	}
     }
