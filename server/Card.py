@@ -12,6 +12,19 @@ class Card():
         self.type = conf.card.getint(cardName , 'type') #类型
         self.move = conf.card.getint(cardName , 'move')#可移动距离
         self.index = index
+        self.attackType =  conf.card.getint(cardName , 'attackType')#攻击类型
     
     def getChess(self) :
         return Chess(self)
+
+    def getInfo(self) :
+        return {
+            'name' : self.name,
+            'moral' : self.moral,
+            'life' : self.life,
+            'attack' : self.attack,
+            'attackType' : self.attackType,
+            'type' : self.type,
+            'move' : self.move,
+            'index' : self.index,
+        }

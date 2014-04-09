@@ -17,20 +17,23 @@ define(function(require, exports, module) {
     	var me = this;
     	me.__proto__ = new Obj();
 
-
-        me.scale = 1; //100*148
-        me.normalSize = {width : 100 , height : 148}
-        me.touchFlag = false; //标志是否被触摸到了
-        me.index = index
-        me.name = cardInfo.name
-        me.type = cardInfo.type
-        me.moral = cardInfo.moral
-        me.attack = cardInfo.attack
-        me.originCardInfo = cardInfo
         
-        me.setDesc(me.name);
-    	me.img = G.tool.img.get('card/' + me.name + '.png'); //下了之后的样子
-    	me.imgB = G.tool.img.get('card/' + me.name + '_b.png'); //卡牌状
+        function init() {
+            me.scale = 1; //100*148
+            me.normalSize = {width : 100 , height : 148}
+            me.touchFlag = false; //标志是否被触摸到了
+            me.index = cardInfo.index || index
+            me.name = cardInfo.name
+            me.type = cardInfo.type
+            me.moral = cardInfo.moral
+            me.attack = cardInfo.attack
+            me.originCardInfo = cardInfo
+            
+            me.setDesc(me.name);
+            me.img = G.tool.img.get('card/' + me.name + '.png'); //下了之后的样子
+            me.imgB = G.tool.img.get('card/' + me.name + '_b.png'); //卡牌状
+            me.setXYScale(0 , 840 , 1)
+        }
 
 
     	me.setXYScale = function(x ,y ,scale) {
@@ -43,7 +46,7 @@ define(function(require, exports, module) {
 
         //设置中心坐标
         me.setCenterX = function(x) {
-            me.setRange((x - me.width / 2) , 840);
+            me.setRange((x - me.width / 2) , 860);
         } 
 
     	me.draw = function() {
@@ -111,7 +114,7 @@ define(function(require, exports, module) {
             G.sence.cellGroup.setEnableChessCell(false)
         }
        
-
+        init()
     }
 
     module.exports = Card;

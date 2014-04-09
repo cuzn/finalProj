@@ -38,7 +38,10 @@ define(function(require, exports, module) {
         //初始化
         me.draw = function() {
             G.draw(function() {
-                G.ctx.globalAlpha = me.alpha
+                G.ctx.globalAlpha = 1 || me.alpha
+                G.ctx.fillStyle="#0000ff";
+                G.ctx.fillRect(me.x,me.y,me.width,me.height);
+                G.ctx.fillStyle="white";
                 G.ctx.textBaseline="middle";
                 G.ctx.textAlign="center";
                 G.ctx.font = "20px Georgia";
@@ -113,8 +116,8 @@ define(function(require, exports, module) {
         me.fade = function(func) {
             me.show()
             me.alpha = 1
-            var event = new Queue.Event(200 , function() {
-                me.alpha -= 0.1
+            var event = new Queue.Event(20 , function() {
+                me.alpha -= 0.01
                 if(me.alpha <= 0) {
                     me.hide()
                     event.setDone()

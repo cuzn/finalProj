@@ -61,7 +61,7 @@ define(function(require, exports, module) {
     	me.run = function() {
             me.nowDate = new Date();
             var runTime = Math.floor((me.nowDate.getTime() - me.startDate.getTime()) / me.duration)
-            while(me.runTime < runTime) {
+            while(me.runTime < runTime && !me.done) {
                 me.runTime++
                 me.runFunc()
             }

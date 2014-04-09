@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 
     	me.draw = function() {
     		G.draw(function() {
-    			G.ctx.drawImage(me.img , 0 ,0 , 640 , 960)
+    			G.ctx.drawImage(me.img , 0 ,0 , me.img.width , me.img.height , 0 , 0 ,640 ,960)
     		});
     	}
 

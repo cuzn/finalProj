@@ -24,7 +24,10 @@ define(function(require, exports, module) {
 			    me.socket.onmessage = function(msg){
                     console.log('recv:' + msg.data)
                     var oper = JSON.parse(msg.data)
-                    if(G.sence[oper.type + 'Oper']) {
+                    if(G.sence.oper) {
+                        G.sence.oper(oper)
+                    }else if(G.sence[oper.type + 'Oper']) {
+                        console.log('fuck')
                         G.sence[oper.type + 'Oper'](oper)
                     }
                 };
@@ -33,6 +36,7 @@ define(function(require, exports, module) {
                     msg.hide()
                     msg = new Msg('失去连接,重新连接？')
                     msg.show(function() {
+                        location.reload() 
                         msg.hide()
                     })
                 };

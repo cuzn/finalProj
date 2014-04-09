@@ -11,7 +11,7 @@ define(function(require, exports, module) {
     var Msg = require('class/obj/Message')
     var Action = require('class/Action')
     var Chess = require('class/obj/Chess')
-
+    var EndTurn = require('class/obj/EndTurn')
 
     var GameSence = function() {
     	var me = this;
@@ -23,14 +23,9 @@ define(function(require, exports, module) {
         me.enemybaseInfo = null;
 
         me.chessDict = {}
-        //测试用的背景图片
-        var bgImg = G.tool.img.get('gameSence.jpg')
-        me.addObj( 5 , new Bg(bgImg) );
-
-        
-
-
+       
         me.init = function() {
+            me.initBg();
             me.initCell();
             me.initConn();
             me.action = new Action()
@@ -42,6 +37,13 @@ define(function(require, exports, module) {
             me.client = new Client();
             me.client.conn();
         }
+
+        me.initBg = function() {
+            //测试用的背景图片
+            var bgImg = G.tool.img.get('gameSence.jpg')
+            me.addObj( 5 , new Bg(bgImg) );
+        }
+
         /**
          * 设置点击卡牌后的卡牌介绍
          * @param  {string} cardName 卡牌名
@@ -75,7 +77,6 @@ define(function(require, exports, module) {
         }
 
 
-
         me.initCardGroup = function(oper) {
             var cardGroup = new CardGroup();
             me.cardGroup = cardGroup;
@@ -98,17 +99,57 @@ define(function(require, exports, module) {
         me.initBaseInfo = function(info) {
             me.baseInfo = new BaseInfo(info.me , true)
             me.enemybaseInfo = new BaseInfo(info.enemy , false)
-            me.addObj(2 , me.baseInfo)
-            me.addObj(2 , me.enemybaseInfo)
+            me.addObj(4 , me.baseInfo)
+            me.addObj(4 , me.enemybaseInfo)
         }
 
         me.backToMenu = function() {
             console.log('back to menu')
         }
 
+        me.oper = function(oper) {
+            console.log('bingo')
+            if(me[oper.type + 'Oper']) {
+                me[oper.type + 'Oper'](oper)
+            }
+            if(oper.me){
+                me.baseInfo.formInfo(oper.me)
+            }
+            if(oper.enemy){
+                me.enemybaseInfo.formInfo(oper.enemy)
+            }
+        }
         me.beginOper = function(oper) {
             me.initBaseInfo(oper)
             me.initCardGroup(oper)
+
+            var endTurn = new EndTurn()
+            me.addObj(1 , endTurn)
+        }
+
+        me.endTurnOper = function(oper) {
+            var msg = ''
+            if(me.baseInfo.onTurn) {
+                msg = '回合结束'
+            }else {
+                msg = '你的回合'
+                //加卡片
+                if(oper.card){
+                    var card = new Card(oper.card)
+                    me.cardGroup.addCard(card)
+                    me.cardGroup.calcPos()
+                } else {
+                    msg += ',卡牌已满'
+                }
+                //重置棋子状态
+                for (var index in me.chessDict) {
+                    me.chessDict[index].isMoved = false
+                    me.chessDict[index].isAttacked = false;
+                }
+
+            }
+            Msg.msg.setMsg(msg)
+            Msg.msg.fade()
         }
 
         me.overOper = function(oper) {
@@ -130,8 +171,34 @@ define(function(require, exports, module) {
         me.addChessOper = function(oper) {
             var chess = new Chess(oper.chess)
             var cell = me.cellGroup.getCell(oper.cell)
+            me.chessDict[chess.index] = chess
             cell.addChess(chess)
+        }
 
+        me.moveChessOper = function(oper) {
+            var cell = me.cellGroup.getCell(oper.cell)
+            var chess = me.chessDict[oper.chess.index]
+            chess.isMoved = true
+            cell.addChess(chess)
+        }
+
+        me.chessAttackOper = function(oper) {
+            var chess1 = me.chessDict[oper.chesses[0].index]
+            var chess2 = me.chessDict[oper.chesses[1].index]
+
+            chess1.attackChess(chess2 , oper.chesses)
+        }
+
+        me.attackWallOper = function(oper) {
+            var chess = me.chessDict[oper.chess.index]
+            var baseInfo = G.sence.baseInfo
+            var attackPos = -1
+            if(G.sence.baseInfo.onTurn) {
+                baseInfo = G.sence.enemybaseInfo
+                attackPos = 1
+            }
+
+            chess.attackEvent(0 , attackPos , oper.chess , baseInfo.chessAttack)
         }
 
     }

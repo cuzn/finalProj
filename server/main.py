@@ -47,8 +47,6 @@ class main():
 
                     except Exception ,e:
                         print e
-                        self.server.close()
-                        exit();
                         disconnected = True
 
                     if disconnected:

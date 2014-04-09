@@ -41,22 +41,39 @@ define(function(require, exports, module) {
             }
         }
 
+        me.getCellList = function() {
+            var cellList = []
+            for(var row in me.cellList){
+                for(var col in  me.cellList[row]) {
+                    cellList.push(me.cellList[row][col])
+                }
+            }
+            return cellList
+        }
+        me.setAllEnable = function(flag , cellList) {
+            cellList = cellList || me.getCellList()
+            for(var i in cellList) {
+                cellList[i].setBlink(flag)
+            }
+        }
         /**
          * 获取可以移动到的格子
          * @return {Array} Cell list
          */
         me.getEnableMoveCellList = function(cell , move) {
             var enableCellList = []
-            for(var x = -move ; x ++ ; x <= move) {
-               for(var y = -move ; y ++ ; y <= move) {
-                    if(Math.abs(x) + Math.abs(y) > move &&
-                        cell.row + x >= 0 && cell.row + x <= 4 &&
-                        cell.col + y >= 0 && cell.col + y <= 4
+            for(var x = -move ;   x <= move;x ++) {
+               for(var y = -move ; y <= move ; y ++) {
+                    if(Math.abs(x) + Math.abs(y) > move ||
+                        cell.row + x < 0|| cell.row + x > 4 ||
+                        cell.col + y < 0 || cell.col + y > 4
                         ) {
                         continue;
                     }
                     var enableCell = me.cellList[cell.row + x][cell.col + y]
-                    enableCellList.push(enableCell)
+                    if(!enableCell.chess){
+                        enableCellList.push(enableCell)
+                    }
                 }
             }
             return enableCellList

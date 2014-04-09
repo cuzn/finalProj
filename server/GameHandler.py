@@ -10,25 +10,38 @@ class GameHandler(ClientHandler):
     def __init__(self):
         ClientHandler.__init__(self)
         self.desc = 'GameHandler'
-        self.life = 30 #生命值
+        self.life = 5 #生命值
         self.moral = 1 #士气值
         self.cardDict = {} #卡牌列表
+        self.cardMaxNum = 6
         self.chessDict = {} #棋子列表
         self.cardSuffix = 0
         self.chessSuffix = 0
         self.onTurn = False#是否到你出手
         self.enemy = None
         self.game = None
+        self.attack = 1
+        self.isDied = False
 
+    def delLife(self , attack) :
+        self.life -= attack 
+        if self.life < 0 :
+            self.life = 0
+            self.isDied = True 
 
     def addCard(self , num = 1):
         cardList = conf.card.sections()
+        addCardList = []
         for i in range(num) :
+            if len(self.cardDict) >= self.cardMaxNum :
+                break
             cardName = random.choice(cardList)
             cardIndex = self.genCardIndex()
             card = Card(cardName , cardIndex)
             self.cardDict[cardIndex] = card
-    
+            addCardList.append(card)
+
+        return addCardList
 
     #处理的方法,重写，将操作传给Game对象处理
     #oper json对象
@@ -42,6 +55,20 @@ class GameHandler(ClientHandler):
             method(oper , self)
         else :
             self.client.log('unknow oper')
+    
+
+    def changeTurn(self , round):
+        if self.onTurn == True :
+            self.onTurn = False
+        else :
+            if round > 9 :
+                self.moral = 9
+            else :
+                self.moral = round
+            self.onTurn = True
+
+
+
 
     #开始游戏
     def begin(self) :
@@ -72,14 +99,15 @@ class GameHandler(ClientHandler):
             }
         return cardDictInfo
 
-
     def getBaseInfo(self) :
         info = {
             'life' : self.life,
             'moral' : self.moral,
             'cardNum' : len(self.cardDict),
             'chessNum' : len(self.chessDict),
-            'onTurn' : self.onTurn
+            'onTurn' : self.onTurn,
+            'attack' : self.attack,
+            'isDied' : self.isDied
         }
 
         return info

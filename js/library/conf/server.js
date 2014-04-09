@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 
 
     var server = {
-    	host : 'ws://192.168.1.101:8080/' ,
+    	host : 'ws://192.168.206.78:8080/' ,
     }
     module.exports = server;
 })

@@ -8,7 +8,11 @@ define(function(require, exports, module) {
     var imgTool = {
         imgObjList : {},
         get : function(atr) {
-            return this.imgObjList[atr];
+            if(this.imgObjList[atr]) {
+                return this.imgObjList[atr];
+            }else {
+                console.error('unfind :' +atr)
+            }
         }
     };
     /**

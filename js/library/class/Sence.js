@@ -120,20 +120,27 @@ define(function(require, exports, module) {
           console.log('finishQueue' , finishQueue);
       }
 
-      me.getObjByXY = function(x ,y) {
+      me.getObjByXY = function(x ,y , desc , func) {
         var objList = [];
         for(var layer in me.objList) {
           for(var i in me.objList[layer]) {
             var obj = me.objList[layer][i];
             var on = obj.on && obj.on(x , y);
             if(on) {
-              //console.log(obj.desc + ' is on')
-              objList.push(obj);
+              if(desc){
+                if(obj.desc == desc){
+                  objList.push(obj);
+                  if(func){
+                    //可能出现两个的情况，暂时先不管
+                    func(obj)
+                  }
+                }
+              }else {
+                objList.push(obj);
+              }
             }
           }
-         
         }
-        //return the top one;
         if(objList.length > 0) {
           return objList;
         }else {
@@ -172,7 +179,7 @@ define(function(require, exports, module) {
         }
         var touchObj = me.getObjByXY(touch.x,touch.y);
         //如果touch了一个，默认将接下来的touchmove交给它处理
-         me.touch.obj = touchObj 
+        me.touch.obj = touchObj 
         touchObj && touchObj[0].touch(touch.x,touch.y);
       }
 
@@ -192,9 +199,7 @@ define(function(require, exports, module) {
         if(me.bindTouchmove) {
           me.bindTouchmove(touch.x,touch.y);
           return;
-        } else {
-          console.log('没得')
-        }
+        } 
         //如果有有touch到了一个物体，默认用那个物体来处理移动事件。
         var touchObj = me.touch.obj || me.getObjByXY(touch.x,touch.y);
         touchObj && touchObj[0].touchmove(touch.x ,touch.y);

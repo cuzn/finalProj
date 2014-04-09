@@ -10,8 +10,8 @@ define(function(require, exports, module) {
 
     	me.cardDict = {};
     	me.cardDist = 80;
-    	me.senceLayer = 3; //卡牌在第二组
-        me.cardY = 840
+    	me.senceLayer = 3; //卡牌在第3组
+        me.cardY = 0
 
     	me.addCard = function(card) {
     		me.cardDict[card.index] = card;

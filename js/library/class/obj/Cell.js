@@ -36,7 +36,7 @@ define(function(require, exports, module) {
 
 
         //每隔半秒修改一下颜色
-        me.blinkEvent = new Queue.Event(50 , function(){
+        me.blinkEvent = new Queue.Event(25 , function(){
             if(me.blinkFlag) {
                 me.blinkAlpha = me.blinkAlpha + 0.01
             }else { 
@@ -55,6 +55,9 @@ define(function(require, exports, module) {
 
 
     	me.addChess = function(chess) {
+            if(chess.cell) {
+                chess.cell.delChess()
+            }
             chess.cell = me;
     		chess.setRange(me.x , me.y , me.size.width , me.size.height);
     		G.sence.addObj(3 , chess);

@@ -18,8 +18,9 @@ class Client():
 
     def setHandler(self , handler) :
         self.handler = handler
-        self.log('change client:' + handler.desc)
-        handler.setClient(self)
+        if handler :
+            self.log('change client:' + handler.desc)
+            handler.setClient(self)
 
 
     def send(self , msg):
