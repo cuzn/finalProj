@@ -13,6 +13,7 @@ class Chess():
         self.move = card.move
         self.isDied = False
         self.attackType = card.attackType
+        self.attackCount = 1
 
 
     def getInfo(self) :
@@ -39,8 +40,10 @@ class Chess():
             self.delLife(0)
         elif self.attackType == 2 and chess.attackType ==2:
             chess.delLife(self.attack)
-            self.delLife(0)
-       
+            self.delLife(chess.attack)
+
+        self.attackCount += 1
+        
 
     def delLife(self , attack) :
         self.life -= attack 
@@ -51,4 +54,8 @@ class Chess():
     def attackWall(self , user) :
         self.delLife(user.attack)
         user.delLife(self.attack)
+        self.attackCount += 1
+
+    def reset(self) :
+        self.attackCount = 1
 

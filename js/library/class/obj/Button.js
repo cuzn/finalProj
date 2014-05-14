@@ -15,6 +15,11 @@ define(function(require, exports, module) {
         me.txt = '确认'
 
         me.draw = function() {
+            G.draw(function(){
+                G.ctx.strokeStyle  = '#c0ff00';
+                G.ctx.lineWidth = 1;
+                G.ctx.strokeRect(me.x , me.y , me.width , me.height);
+            })
             G.draw(function() {
                 G.ctx.font = "20px Georgia";
                 G.ctx.textBaseline="middle";

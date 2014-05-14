@@ -61,22 +61,49 @@ define(function(require, exports, module) {
          * @return {Array} Cell list
          */
         me.getEnableMoveCellList = function(cell , move) {
+            console.log('sdf')
             var enableCellList = []
-            for(var x = -move ;   x <= move;x ++) {
-               for(var y = -move ; y <= move ; y ++) {
-                    if(Math.abs(x) + Math.abs(y) > move ||
-                        cell.row + x < 0|| cell.row + x > 4 ||
-                        cell.col + y < 0 || cell.col + y > 4
-                        ) {
-                        continue;
-                    }
-                    var enableCell = me.cellList[cell.row + x][cell.col + y]
-                    if(!enableCell.chess){
-                        enableCellList.push(enableCell)
-                    }
+            if(move == 0) {
+                return enableCellList
+            }
+            
+            var checkCellList = [
+                me.getCellByRC(cell.row + 1 , cell.col),
+                me.getCellByRC(cell.row - 1 , cell.col),
+                me.getCellByRC(cell.row  , cell.col + 1),
+                me.getCellByRC(cell.row  , cell.col - 1),
+            ]
+
+            for(var i in checkCellList) {
+                //有这个格子，而且格子没有棋子
+                if(checkCellList[i] && !checkCellList[i].chess) {
+                    //检测下一步可以走的
+                    enableCellList = enableCellList
+                        .concat(me.getEnableMoveCellList(checkCellList[i] , move-1))
+                        .concat([checkCellList[i]])
                 }
             }
-            return enableCellList
+
+            return me.uniqueCellList(enableCellList) 
+        }
+
+        me.getCellByRC = function(row , col) {
+            return me.cellList[row] && me.cellList[row][col] 
+        }
+
+        me.uniqueCellList = function(cellList) {
+            var hashArray = []
+            var retArr = []
+
+            for(var i in cellList) {
+                var index = cellList[i].row * 10 + cellList[i].col
+                if(!hashArray[index]) {
+                    retArr.push(cellList[i])
+                    hashArray[index] = true
+                }
+            }
+
+            return retArr
         }
     }
 

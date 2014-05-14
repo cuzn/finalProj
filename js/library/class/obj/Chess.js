@@ -6,6 +6,7 @@ define(function(require, exports, module) {
     var G = require('global');
     var Obj = require('class/Obj')
     var Arrow = require('class/obj/Arrow')
+    var Line = require('class/obj/Line')
     var Msg = require('class/obj/Message')
     var Queue = require('class/Queue')
 
@@ -31,8 +32,13 @@ define(function(require, exports, module) {
             me.chessAbleBorder = G.tool.img.get('card/' + me.move + me.attackType +'/able.png')
             me.chessNormalBorder = G.tool.img.get('card/' + me.move + me.attackType +'/normal.png')
             me.isAttacked = true //刚开始下的时候不可以发动攻击
+            me.isAttackedWall = false 
+            me.attackCount = 1 // 攻击消耗的士气
             me.isMoved = true
             me.alpha = 1
+            me.line = new Line()
+
+            G.sence.addObj(2 , me.line)
 
             if(G.sence.baseInfo.onTurn) {
                 me.isMe = true
@@ -51,7 +57,7 @@ define(function(require, exports, module) {
                 if(!me.isMe) {
                     bgImg = me.chessEnemyBorder
                 } else {
-                    if(!me.isAttacked || !me.isMoved) {
+                    if( !me.isMoved) {
                         bgImg = me.chessAbleBorder
                     }else {
                         bgImg = me.chessNormalBorder
@@ -105,8 +111,13 @@ define(function(require, exports, module) {
 
             //画轨迹
             if(me.touchmoveFlag == true) {
-                G.draw(me.drawPath());
-                
+                me.line.isDraw = true
+                me.line.startX = me.x + me.width / 2;
+                me.line.startY = me.y + me.height / 2;
+                me.line.endX = me.touchmove.x
+                me.line.endY = me.touchmove.y
+            }else {
+                me.line.isDraw = false
             }
             
     	}
@@ -126,23 +137,10 @@ define(function(require, exports, module) {
             //var bezier1 = {x :  Math.randomNe(me.width / 2) , y : Math.randomNe(me.height / 2)}
             //var bezier2 = {x : Math.randomNe(me.width / 2)  , y : Math.randomNe(me.height /2)}
 
-            var my_gradient=G.ctx.createLinearGradient(startX,startY,me.touchmove.x,me.touchmove.y);
-            my_gradient.addColorStop(0,"orange");
-            my_gradient.addColorStop(1,"red");
-            G.ctx.lineWidth = 15;
-            G.ctx.lineCap = 'round';
-            G.ctx.strokeStyle = my_gradient
+            
 
             var func = function() {
-                    G.ctx.beginPath();
-                    G.ctx.moveTo(startX,startY);
-                    // G.ctx.bezierCurveTo(
-                    //     startX + bezier1.x , startY + bezier1.y,
-                    //     me.touchmove.x + bezier2.x, me.touchmove.y + bezier2.y ,
-                    //     me.touchmove.x,me.touchmove.y
-                    //     );
-                    G.ctx.lineTo(me.touchmove.x , me.touchmove.y);
-                    G.ctx.stroke();
+                   
             }
 
             
@@ -164,6 +162,7 @@ define(function(require, exports, module) {
                 });
                 var fadeEvent = new Queue.Event(10 , function() {
                     me.alpha -= 0.01
+                    //G.playSound('fade.mp3')
                     if (me.alpha <= 0){
                         fadeEvent.setDone();
                         me.cell.delChess()
@@ -240,7 +239,7 @@ define(function(require, exports, module) {
                     }
                  })
             }else { //没有移动
-                 G.sence.setCardDesc(chessName)
+                 G.sence.setCardDesc(me)
             }
             me.touchmoveFlag = false; 
             G.sence.cellGroup.setAllEnable(false)
@@ -323,8 +322,9 @@ define(function(require, exports, module) {
             var oriY = me.y
             var shakeEvent = new Queue.Event(75 , function() {
                 shakeEvent.flag = typeof shakeEvent.flag == 'undefined' ? 1 : -shakeEvent.flag
-                if(shakeEvent.runTime >= 6){
-                        shakeEvent.setDone()
+                if(shakeEvent.runTime >= 7){
+                    parent.x  = oriX
+                    shakeEvent.setDone()
                 }
                 parent.x = oriX + shakeEvent.flag * 5
             });
@@ -348,6 +348,7 @@ define(function(require, exports, module) {
                 arrow.endX -=  x * 3
                 arrow.endY -= y * 3
             });
+           //G.playSound('arrow.mp3')
             return shootEvent;
 
         }
@@ -360,12 +361,13 @@ define(function(require, exports, module) {
         }
 
         me.attackChess = function(chess , chessInfos) { 
-            var attackPos = 0 //上右下左
-
+            
             var y = me.cell.row - chess.cell.row
             var x = me.cell.col - chess.cell.col
             if(me.attackType == 1 ) {
-                me.attackEvent(x , y ,chessInfos[0])
+                me.attackEvent(x , y ,chessInfos[0] , function(){
+                        //G.playSound('sword.mp3')
+                })
                 chess.attackEvent(-x , - y , chessInfos[1])
             }else {
                 G.sence.bindRunQueue(new Queue([
@@ -373,8 +375,14 @@ define(function(require, exports, module) {
                     me.setInfoEvent(chessInfos[0]),
                     chess.setInfoEvent(chessInfos[1])
                 ]))
-            }
 
+                if(chess.attackType == 2) {
+                    G.sence.bindRunQueue(new Queue([
+                    chess.shootEvent(-x , -y) , me.shakeEvent() 
+                ]))
+                }
+            }
+            me.attackCount ++
         }
         init()
     }

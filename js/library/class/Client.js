@@ -13,7 +13,7 @@ define(function(require, exports, module) {
     	me.socket = null;
     	me.conn = function() {
             var msg = new Msg('链接中……')
-            msg.show(function() {} , function() {})
+            msg.show()
     		try {
 			    me.socket = new WebSocket(G.conf.server.host);
 			    me.socket.onopen = function(data){

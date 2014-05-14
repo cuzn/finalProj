@@ -61,17 +61,23 @@ define(function(require, exports, module) {
         }
         //移动棋子
         me.moveChessOper = function(chess , cell) {
-                            console.log('test')
-            if(!G.sence.baseInfo.delMoral(0)){
+            var delMoral = 1
+            //后退
+            if(chess.cell.row < cell.row) {
+                delMoral = 2
+            }
+            if(!G.sence.baseInfo.delMoral(delMoral)){
                 return false
             }
+            
             var msg = {
                 type : 'moveChess' ,
                 chessIndex : chess.index,
                 cell : {
                     row : cell.row,
                     col : cell.col,
-                }
+                },
+                delMoral : delMoral
             }
 
             G.sence.client.send(msg)
@@ -80,7 +86,7 @@ define(function(require, exports, module) {
 
         //棋子攻击
         me.chessAttackOper = function(chess1 , chess2) {
-            if(!G.sence.baseInfo.delMoral(1)){
+            if(!G.sence.baseInfo.delMoral(chess1.attackCount)){
                 return false
             }
 
@@ -96,10 +102,16 @@ define(function(require, exports, module) {
         }
 
         me.attackWallOper = function(chess) {
-            if(!G.sence.baseInfo.delMoral(1)){
+            if(chess.isAttackedWall) {
+                Msg.msg.setMsg('一回合只能攻击一次城墙')
+                Msg.msg.fade()
+                return false
+            }
+            if(!G.sence.baseInfo.delMoral(chess.attackCount)){
                 return false
             }
 
+            chess.isAttackedWall = true
             var msg = {
                 type : 'attackWall',
                 chessIndex : chess.index

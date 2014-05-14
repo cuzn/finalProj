@@ -22,6 +22,7 @@ class GameHandler(ClientHandler):
         self.game = None
         self.attack = 1
         self.isDied = False
+        self.remainCardNum = 33
 
     def delLife(self , attack) :
         self.life -= attack 
@@ -33,14 +34,14 @@ class GameHandler(ClientHandler):
         cardList = conf.card.sections()
         addCardList = []
         for i in range(num) :
-            if len(self.cardDict) >= self.cardMaxNum :
+            if len(self.cardDict) >= self.cardMaxNum or self.remainCardNum == 0:
                 break
             cardName = random.choice(cardList)
             cardIndex = self.genCardIndex()
             card = Card(cardName , cardIndex)
             self.cardDict[cardIndex] = card
             addCardList.append(card)
-
+            self.remainCardNum -= 1
         return addCardList
 
     #处理的方法,重写，将操作传给Game对象处理
@@ -61,18 +62,22 @@ class GameHandler(ClientHandler):
         if self.onTurn == True :
             self.onTurn = False
         else :
+            #士气计算
             if round > 9 :
                 self.moral = 9
             else :
                 self.moral = round
             self.onTurn = True
+            #棋子回复
+            for index in self.chessDict:
+                self.chessDict[index].reset()
+
 
 
 
 
     #开始游戏
     def begin(self) :
-        self.addCard(3)
         msg = {
             'type' : 'begin',
         }
@@ -107,7 +112,8 @@ class GameHandler(ClientHandler):
             'chessNum' : len(self.chessDict),
             'onTurn' : self.onTurn,
             'attack' : self.attack,
-            'isDied' : self.isDied
+            'isDied' : self.isDied,
+            'remainCardNum' : self.remainCardNum
         }
 
         return info

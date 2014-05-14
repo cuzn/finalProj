@@ -12,12 +12,14 @@ define(function(require, exports, module) {
     var Action = require('class/Action')
     var Chess = require('class/obj/Chess')
     var EndTurn = require('class/obj/EndTurn')
+    var RemainTime = require('class/obj/RemainTime')
+    var Queue = require('class/Queue')
 
     var GameSence = function() {
     	var me = this;
     	me.__proto__ = new Sence();
 
-    	me.setText('welcome GameSence');
+    	me.setText('GameSence');
 
         me.baseInfo = null;
         me.enemybaseInfo = null;
@@ -68,7 +70,7 @@ define(function(require, exports, module) {
                 //还原触摸事件
                 me.setBindTouch(null);
                 me.setBindTouchend(null);
-                me.setBindTouchmove(null);
+                me.setBindTouchmove(null); 
             })
             
            
@@ -122,9 +124,15 @@ define(function(require, exports, module) {
         me.beginOper = function(oper) {
             me.initBaseInfo(oper)
             me.initCardGroup(oper)
-
             var endTurn = new EndTurn()
             me.addObj(1 , endTurn)
+            if(me.baseInfo.onTurn){
+                Msg.msg.setMsg('游戏开始，你先手')
+            } else {
+                Msg.msg.setMsg('游戏开始，你后手')
+            }
+            me.setRemainTime(me.baseInfo.onTurn)
+            Msg.msg.fade()
         }
 
         me.endTurnOper = function(oper) {
@@ -138,18 +146,50 @@ define(function(require, exports, module) {
                     var card = new Card(oper.card)
                     me.cardGroup.addCard(card)
                     me.cardGroup.calcPos()
+                } else if(me.baseInfo.remainCardNum == 0){
+                    msg += ',卡牌库没牌鸟~~'
                 } else {
-                    msg += ',卡牌已满'
+                    msg += ',手牌已满鸟~~'
                 }
+
                 //重置棋子状态
                 for (var index in me.chessDict) {
                     me.chessDict[index].isMoved = false
                     me.chessDict[index].isAttacked = false;
-                }
+                    me.chessDict[index].attackCount = 1
+                    me.chessDict[index].isAttackedWall = false
 
+                }
             }
             Msg.msg.setMsg(msg)
             Msg.msg.fade()
+
+            me.setRemainTime(!me.baseInfo.onTurn)
+            
+        }
+
+        me.setRemainTime = function(isMe) {
+            //设置倒计时
+            var remainTime = new RemainTime(isMe)
+            G.sence.addObj(2 , remainTime)
+
+            var countTimeEvent = new Queue.Event(1000 , function() {
+                //var timeSound = G.tool.sound.get('time.mp3')
+                //timeSound.loop = true
+                if(remainTime.remainTime == 0 || remainTime.isMe != me.baseInfo.onTurn) {
+                    //timeSound.pause()
+                    countTimeEvent.setDone()
+                    if(remainTime.isMe && me.baseInfo.onTurn) {
+                        G.sence.action.oper('endTurn')
+                    }
+                    G.sence.delObj(remainTime)
+                }else if(remainTime.remainTime == 10) {
+                    //timeSound.play()
+                }
+                remainTime.remainTime --
+            });
+
+             G.sence.bindRunQueue(new Queue([countTimeEvent]))
         }
 
         me.overOper = function(oper) {
@@ -173,6 +213,7 @@ define(function(require, exports, module) {
             var cell = me.cellGroup.getCell(oper.cell)
             me.chessDict[chess.index] = chess
             cell.addChess(chess)
+            //G.playSound('pu.mp3')
         }
 
         me.moveChessOper = function(oper) {
@@ -180,12 +221,13 @@ define(function(require, exports, module) {
             var chess = me.chessDict[oper.chess.index]
             chess.isMoved = true
             cell.addChess(chess)
+            //G.playSound('pu.mp3') 
         }
 
         me.chessAttackOper = function(oper) {
             var chess1 = me.chessDict[oper.chesses[0].index]
             var chess2 = me.chessDict[oper.chesses[1].index]
-
+            
             chess1.attackChess(chess2 , oper.chesses)
         }
 
@@ -197,8 +239,9 @@ define(function(require, exports, module) {
                 baseInfo = G.sence.enemybaseInfo
                 attackPos = 1
             }
-
-            chess.attackEvent(0 , attackPos , oper.chess , baseInfo.chessAttack)
+            chess.attackEvent(0 , attackPos , oper.chess , baseInfo.chessAttack , function() {
+                //G.playSound('wall.mp3')
+            })
         }
 
     }

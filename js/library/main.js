@@ -5,6 +5,7 @@ define(function(require, exports, module) {
     var screenTool = require('tool/screen')
     var G = require('global');
     var LoadSence = require('class/sence/LoadSence');
+    var soundTool = require('tool/sound')
 
 
 
@@ -16,9 +17,9 @@ define(function(require, exports, module) {
             this.initEvent,
             this.loadImg,
             this.loadSound,
-            this.runGame,
         ];
         console.log('event order exec');
+        setTimeout(main.runGame, 20);
         eventTool.execByOrder(funcList)
         
     }
@@ -46,7 +47,6 @@ define(function(require, exports, module) {
 
 
     main.initScence = function(funcList) {
-        
         G.sence = new LoadSence();
         console.log('initScence')
         eventTool.execByOrder(funcList)
@@ -92,24 +92,36 @@ define(function(require, exports, module) {
             }
         }
         imgTool.loadImg(imgSrcList , oneDoneFunc)
-
-
     }
 
     main.loadSound = function(funcList) {
-        G.sence.setText('begin to load sounds');
-        console.log('loadSound');
+        // console.log('loadSound');
+        // var soundSrcList = conf.sound.srcList
+        // var allNum = soundSrcList.length;
+        // var loadNum = 0;
+        // G.sence.setText('begin to load sounds:'+  loadNum+ '/' + allNum);
 
-        G.sence.setText('all done , begin fight');
+        // var oneDoneFunc = function() {
+        //     loadNum ++
+        //     G.sence.setText('begin to load sounds:'+  loadNum+ '/' + allNum)
+        //     this.oncanplaythrough = null
+        //     //load done
+        //     if(loadNum >= allNum) {
+        //         G.sence.status = 'load done'
+        //         eventTool.execByOrder(funcList)
+        //     }
+        // }
         G.sence.status = 'load done'
         eventTool.execByOrder(funcList)
+        //console.log(soundSrcList , oneDoneFunc)
+        //soundTool.loadsound(soundSrcList , oneDoneFunc)
     }
 
     main.runGame = function () {
-        G.ctx.fillRect(0 , 0 , G.c.width ,G.c.height)
+        G.ctx.fillRect(0 , 0 ,640 ,960)
         G.sence.run();
         G.sence.draw();
-        setTimeout(main.runGame, 30);
+        setTimeout(main.runGame, 20);
     }
     
     module.exports = main

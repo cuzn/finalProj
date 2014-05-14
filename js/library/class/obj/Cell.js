@@ -80,8 +80,15 @@ define(function(require, exports, module) {
             }
         }
     	me.draw = function() {
+            G.draw(function(){
+                 G.ctx.strokeStyle  = '#c0ff00';
+                    G.ctx.lineWidth = 1;
+                    G.ctx.strokeRect(me.x , me.y , me.width , me.height);
+            })
     		if(me.isBlink) {
                 G.draw(function() {
+                    //画边框
+                   
                     G.ctx.fillStyle = me.blinkColor
                     G.ctx.globalAlpha = me.blinkAlpha
                     G.ctx.fillRect(me.x,me.y,me.width,me.height);

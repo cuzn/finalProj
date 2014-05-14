@@ -12,13 +12,17 @@ define(function(require, exports, module) {
     	tool : {
     		img : require('tool/img'),
     		event : require('tool/event'),
-    		screen : require('tool/screen')
+    		screen : require('tool/screen'),
+            sound : require('tool/sound')
     	},
     	draw : function(func) {
     		this.ctx.save();
     		func();
     		this.ctx.restore();
-    	}
+    	},
+        playSound : function(sound) {
+            this.tool.sound.get(sound).play()
+        }
     };
 
     /**
@@ -65,6 +69,6 @@ define(function(require, exports, module) {
       return  len
     }
 
-
+    window.G = global
     module.exports = global
 })

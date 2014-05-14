@@ -18,6 +18,7 @@ define(function(require, exports, module) {
             me.cardNum = info.cardNum
             me.isMe = isMe
             me.attackShake = 0 //被攻击时的震动
+            me.remainCardNum = info.remainCardNum
             me.setDesc('BaseInfo')
 
             if(!me.isMe) {
@@ -66,6 +67,7 @@ define(function(require, exports, module) {
             me.moral = info.moral;
             me.onTurn = info.onTurn;
             me.cardNum = info.cardNum
+            me.remainCardNum = info.remainCardNum
         }
         me.draw = function() {
             if(me.isMe) {
@@ -117,12 +119,11 @@ define(function(require, exports, module) {
                     var cardStoreImg = G.tool.img.get('card_store.png');
                     G.ctx.drawImage(cardStoreImg , 0 , 0 , 
                         cardStoreImg.width , cardStoreImg.height ,
-                        610, 300 ,
+                        610, 574,
                         cardStoreImg.width , cardStoreImg.height  )
-
-                    var txt = me.life + ':' + me.moral + ':' + me.onTurn;
+                    G.ctx.fillStyle = 'black'
                     G.ctx.font = "20px Georgia";
-                    G.ctx.fillText(txt , 100 , 200)
+                    G.ctx.fillText(me.remainCardNum , 610 + cardStoreImg.width / 2 , 574 + cardStoreImg.height - 20)
                 });
             } else {
                 G.draw(function() {
@@ -171,12 +172,26 @@ define(function(require, exports, module) {
                     var cardStoreImg = G.tool.img.get('card_store.png');
                     G.ctx.drawImage(cardStoreImg , 0 , 0 , 
                         cardStoreImg.width , cardStoreImg.height ,
-                        610, 574 ,
+                        610,  300,
                         cardStoreImg.width , cardStoreImg.height  )
-
-                    var txt = me.life + ':' + me.moral + ':' + me.onTurn;
+                    G.ctx.fillStyle = 'black'
                     G.ctx.font = "20px Georgia";
-                    G.ctx.fillText(txt , 100 , 574)
+                    G.ctx.fillText(me.remainCardNum , 610 + cardStoreImg.width / 2 , 300 + cardStoreImg.height - 20)
+                    
+                    //还要画手牌
+                    var num = me.cardNum
+                    var flag = num % 2 ;
+                    var firstCardX = G.tool.screen.realWinSize.width / 2 - ((num / 2) - 0.5) * 80 
+                    var cardBackImg = G.tool.img.get('card/cardBack.png');
+                    for(var i = 0 ; i < num ; i ++) {
+                        G.draw(function() {
+                            G.ctx.drawImage(cardBackImg , 0 , 0 , 
+                                cardBackImg.width , cardBackImg.height ,
+                                firstCardX + 80 * i -40,  -30,
+                                100 , 148  )
+                        })
+                        
+                    }
                 });
             }
         }

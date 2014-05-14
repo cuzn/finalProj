@@ -115,6 +115,7 @@ define(function(require, exports, module) {
 
         me.fade = function(func) {
             me.show()
+            //G.playSound('alert.mp3')
             me.alpha = 1
             var event = new Queue.Event(20 , function() {
                 me.alpha -= 0.01
@@ -157,5 +158,5 @@ define(function(require, exports, module) {
     }
 
     Message.msg = new Message()
-    module.exports = Message;
+    module.exports = Message
 })

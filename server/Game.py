@@ -32,6 +32,9 @@ class Game():
         self.gameHandlerList[1].enemy = self.gameHandlerList[0]
         self.gameHandlerList[1].onTurn = False
 
+
+        self.gameHandlerList[0].addCard(3)
+        self.gameHandlerList[1].addCard(3)
         self.gameHandlerList[0].begin()
         self.gameHandlerList[1].begin()
 
@@ -48,6 +51,7 @@ class Game():
     def sendMsg(self , user , msg):
         self.formUserInfo(user , msg)
         user.client.sendJson(msg)
+
 
 
     def getDiffUser(self , user) :
@@ -86,9 +90,9 @@ class Game():
         msg = {
             'type' : 'endTurn'
         }
+        cardList = diffUser.addCard()
         self.sendMsg(user , msg)
         #要加卡片
-        cardList = diffUser.addCard()
         if len(cardList) == 0 : #卡牌已经满了
             msg['card'] = False
         else :
@@ -116,7 +120,7 @@ class Game():
     def moveChessOper(self , oper , user) :
         diffUser = self.getDiffUser(user)
         chess = user.chessDict[oper['chessIndex']]
-        user.moral -= 1
+        user.moral -= oper['delMoral']
 
         msg = {
             'type' : 'moveChess',
@@ -134,6 +138,7 @@ class Game():
         chess1 = user.chessDict[oper['chesses'][0]]
         chess2 = diffUser.chessDict[oper['chesses'][1]]
 
+        user.moral -= chess1.attackCount
         chess1.attackChess(chess2)
         if chess1.isDied :
             del user.chessDict[chess1.index]
@@ -158,6 +163,7 @@ class Game():
         diffUser = self.getDiffUser(user)
         chess = user.chessDict[oper['chessIndex']]
 
+        user.moral -= chess.attackCount
         chess.attackWall(diffUser)
         if diffUser.isDied :
             self.over()
@@ -168,4 +174,3 @@ class Game():
         }
         self.sendMsg(user , msg)
         self.sendMsg(diffUser , msg)
-
